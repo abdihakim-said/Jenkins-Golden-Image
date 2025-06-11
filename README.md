@@ -4,8 +4,7 @@ This project automates the creation, provisioning, and security scanning of a Je
 
 ---
 
-<img width="1440" alt="Screenshot 2025-05-25 at 06 28 15" src="https://github.com/user-attachments/assets/020527dc-d68b-45cb-a50b-408f7c6464ef" />
-
+<img width="756" alt="Screenshot 2025-06-07 at 13 06 48" src="https://github.com/user-attachments/assets/1b2878ba-7de5-41d7-a96e-28cbedbb2f87" />
 
 
 
