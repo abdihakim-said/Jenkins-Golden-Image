@@ -1,60 +1,80 @@
-Jenkins Golden Image
-🚀 Automate Jenkins Deployments with a Pre-Baked, Secure AWS AMI!
+# Jenkins Golden AMI Pipeline
 
-<img width="756" alt="Screenshot 2025-06-07 at 13 06 48" src="https://github.com/user-attachments/assets/a48852ab-073d-436f-9e47-fe8ed451b606" />
+This project automates the creation, provisioning, and security scanning of a Jenkins AMI on AWS using Ansible roles, Packer, Terraform, and Trivy, orchestrated by a Jenkins pipeline.
+
+---
+
+<img width="1440" alt="Screenshot 2025-05-25 at 06 28 15" src="https://github.com/user-attachments/assets/020527dc-d68b-45cb-a50b-408f7c6464ef" />
 
 
-Overview
-The Jenkins Golden Image project automates the creation of a secure, consistent, and production-ready Jenkins server Amazon Machine Image (AMI) using Packer. This image can be deployed quickly in AWS environments, ensuring infrastructure consistency and reducing manual setup time.
 
-Features
-Automated Image Creation: Easily build a Jenkins AMI with all required configurations.
-Custom Role Integration: Package custom Ansible roles and playbooks with your Jenkins setup.
-Version-Controlled: Reproduce builds with specific Packer versions for reliability.
-AWS Integration: Uses environment variables for secure AWS authentication.
-Fast Deployment: Reduce provisioning time by launching pre-baked Jenkins images.
-Prerequisites
-Packer v1.8.7 (tested version)
-AWS account with EC2 and AMI permissions
-AWS CLI configured or AWS credentials exported as environment variables
-Ansible (if customizing roles)
-Quick Start
-1. Install Packer
-bash
-wget https://releases.hashicorp.com/packer/1.8.7/packer_1.8.7_linux_amd64.zip
-unzip packer_1.8.7_linux_amd64.zip -d /usr/local/bin
-2. Package Your Ansible Roles
-bash
-tar -cvf jenkinsrole.tar role/ jenkins.yml
-3. Set AWS Credentials
-bash
-export AWS_ACCESS_KEY_ID=your_access_key
-export AWS_SECRET_ACCESS_KEY=your_secret_key
-4. Build the Jenkins AMI
-bash
-packer build aws-ami.json
-File Structure
-text
-.
-├── aws-ami.json        # Packer template for AWS AMI build
-├── Jenkinsfile         # CI/CD pipeline definition
-├── role/               # Ansible roles for Jenkins configuration
-├── jenkins.yml         # Ansible playbook
-└── README.md           # Project documentation
-Customization
-Modify role/ and jenkins.yml to customize Jenkins plugins, jobs, and configurations.
-Update aws-ami.json for different AWS regions or instance types.
-Contributing
-Contributions, issues, and feature requests are welcome!
-Please open an issue or submit a pull request.
 
-License
-This project is licensed under the MIT License. See LICENSE for details.
 
-Contact
-Created and maintained by @abdihakim-said.
-For questions or support, please open an issue.
+## Problem Statement
 
-Feel free to copy, modify, or extend this README as your project evolves! If you want any specific sections (like badges or screenshots), let me know!
+Provisioning and maintaining consistent, secure, and up-to-date Jenkins environments on AWS can be time-consuming and error-prone. Manual setup leads to configuration drift, inconsistent environments, and potential security vulnerabilities. Additionally, integrating AWS resources like EFS and ensuring the AMI is secure before deployment adds further complexity.
 
-can you make 
+## Solution
+
+This project provides an automated, repeatable pipeline for building, configuring, and validating Jenkins AMIs on AWS. Using a combination of Terraform, Packer, Ansible, and Trivy, the pipeline:
+
+- **Automates Infrastructure Provisioning:** Terraform manages AWS resources and injects dynamic values (like EFS IDs) into the build process.
+- **Automates Jenkins AMI Creation:** Packer builds a new AMI using Ansible roles (`master` and `ospatch`) for consistent configuration.
+- **Integrates AWS EFS:** The EFS ID is dynamically injected and configured during the AMI build.
+- **Ensures Security:** Trivy scans the resulting AMI for vulnerabilities before it is used in production.
+- **Orchestrates Everything in Jenkins:** The entire process is triggered and managed by a Jenkins pipeline, ensuring repeatability and auditability.
+
+This approach eliminates manual steps, reduces errors, enforces security best practices, and delivers production-ready Jenkins AMIs with integrated AWS resources.
+
+
+---
+
+## Features
+
+- **Ansible Roles**: Uses `master` and `ospatch` roles for AMI provisioning.
+- **Packer**: Builds a Jenkins AMI, injecting the EFS ID.
+- **Terraform**: Manages AWS infrastructure and triggers Packer builds.
+- **Trivy**: Scans the built AMI for vulnerabilities.
+- **Jenkins Pipeline**: Automates the entire workflow.
+
+---
+
+## Prerequisites
+
+- Jenkins with a node labeled `packer`
+- AWS credentials stored in Jenkins as secrets (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`)
+- Terraform, Packer, Ansible, and Trivy installed on the Jenkins agent
+- Required IAM permissions for EC2, EFS, and AMI operations
+- An existing EFS File System in AWS
+
+---
+
+
+
+## Pipeline Overview
+
+1. **Terraform Stage**
+    - Initializes and validates Terraform configuration.
+    - Looks up the specified EFS file system.
+    - Triggers a Packer build with the EFS ID injected as a variable.
+
+2. **Packer Build**
+    - Runs `setup.sh` as part of the AMI build.
+    - Installs Ansible, extracts roles, and runs the `jenkins.yml` playbook with the EFS ID.
+
+3. **Trivy Scan Stage**
+    - Retrieves the latest AMI ID owned by your AWS account in `us-east-1`.
+    - Runs a vulnerability scan on the AMI using Trivy.
+
+---
+
+## Key Files
+
+- **`jenkins.yml`**: Ansible playbook using the `master` and `ospatch` roles.
+- **`aws-ami.json`**: Packer template for building the Jenkins AMI.
+- **`main.tf`**: Terraform configuration for AWS provider, EFS lookup, and Packer trigger.
+- **`setup.sh`**: Installs Ansible, extracts roles, runs the playbook, and removes Ansible.
+- **`vars.tfvars`**: Variables for Terraform (must include `efs_id`).
+
+---
+
