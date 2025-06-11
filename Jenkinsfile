@@ -21,7 +21,7 @@ pipeline {
             steps {
                 script {
                     def amiId = sh(
-                        script: 'aws ec2 describe-images --region us-east-1 --owners self --query \'Images | sort_by(@, &CreationDate)[-1].ImageId\' --output text',
+                        script: "aws ec2 describe-images --owners self --region us-east-1 --query 'Images | sort_by(@, &CreationDate)[-1].ImageId' --output text",
                         returnStdout: true
                     ).trim()
                     echo "Latest AMI ID: ${amiId}"
