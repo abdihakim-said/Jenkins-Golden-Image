@@ -12,9 +12,8 @@ pipeline {
                 sh 'tar -cvf jenkinsrole.tar jenkins.yml roles'
                 sh '/usr/local/bin/terraform init'
                 sh '/usr/local/bin/terraform validate'
-                // Make sure vars.tfvars contains: efs_id = "fs-0ca08ca27116ea4b5"
-                sh '/usr/local/bin/terraform plan -var-file=vars.tfvars -out testplan'
-                sh '/usr/local/bin/terraform apply -var-file=vars.tfvars -auto-approve'
+                sh '/usr/local/bin/terraform plan -out testplan'
+                sh '/usr/local/bin/terraform apply -auto-approve'
             }
         }
         stage('trivy scan') {
