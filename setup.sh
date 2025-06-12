@@ -1,6 +1,5 @@
 #---------------------------------------------#
-# Author: Adam WezvaTechnologies
-# Call/Whatsapp: +91-9739110917
+# Author: Abdihakim Said
 #---------------------------------------------#
 
 #!/bin/bash
@@ -29,6 +28,5 @@ echo "#----------------------#"
 sudo apt remove -y ansible
 
 #---------------------------------------------#
-# Author: Adam WezvaTechnologies
-# Call/Whatsapp: +91-9739110917
+# Author: Abdihakim Said
 #---------------------------------------------#
