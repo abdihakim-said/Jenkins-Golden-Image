@@ -28,7 +28,7 @@
 # - name: Ensure EFS entry exists in /etc/fstab
 #   mount:
 #     path: /var/lib/jenkins
-#     src: "{{efs}}.efs.ap-south-1.amazonaws.com:/"
+#     src: "{{efs}}.efs.us-east-1.amazonaws.com:/"
 #     fstype: nfs4
 #     opts: "_netdev"
 #     state: mounted
@@ -37,12 +37,12 @@
   command: echo "efs"
   
 - name: Ensure EFS entry exists in /var/lib/jenkins
-  command: sudo mount -t nfs4 -o nfsvers=4.1 {{efs}}.efs.ap-south-1.amazonaws.com:/ /var/lib/jenkins/
+  command: sudo mount -t nfs4 -o nfsvers=4.1 {{efs}}.efs.us-east-1.amazonaws.com:/ /var/lib/jenkins/
 
 - name: Ensure EFS entry exists in /etc/fstab
   mount:
     path: /var/lib/jenkins
-    src: "{{efs}}.efs.ap-south-1.amazonaws.com:/"
+    src: "{{efs}}.efs.us-east-1.amazonaws.com:/"
     fstype: nfs4
     opts: "_netdev"
     state: mounted
@@ -50,7 +50,7 @@
 - name: Ensure EFS entry exists in /etc/fstab
   mount:
     path: /var/lib/jenkins
-    src: "{{efs}}.efs.ap-south-1.amazonaws.com:/"
+    src: "{{efs}}.efs.us-east-1.amazonaws.com:/"
     fstype: nfs4
     opts: "_netdev"
     state: present
